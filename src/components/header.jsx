@@ -101,6 +101,7 @@ export function Header() {
                     src={user.image}
                     alt={displayName}
                     fill
+                    unoptimized
                     sizes="32px"
                     className="object-cover"
                   />

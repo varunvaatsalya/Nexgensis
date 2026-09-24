@@ -91,6 +91,8 @@ export function ProductTable({
                         src={product.thumbnail}
                         alt={product.title}
                         fill
+                        unoptimized
+                        loading="lazy"
                         sizes="48px"
                         className="object-contain p-1 transition-transform group-hover:scale-105"
                       />

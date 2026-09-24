@@ -65,6 +65,8 @@ export function ProductCard({
                 src={product.thumbnail}
                 alt={product.title}
                 fill
+                unoptimized
+                loading="lazy"
                 sizes="80px"
                 className="object-contain p-1"
               />

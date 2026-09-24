@@ -38,6 +38,7 @@ export function ProductGallery({
             src={activeImage}
             alt={title}
             fill
+            unoptimized
             priority
             sizes="(max-width: 768px) 100vw, 500px"
             className="object-contain p-4 transition-transform duration-300 hover:scale-105"
@@ -78,6 +79,8 @@ export function ProductGallery({
                   src={img}
                   alt={`${title} thumbnail ${idx + 1}`}
                   fill
+                  unoptimized
+                  loading="lazy"
                   sizes="72px"
                   className="object-contain p-1"
                 />
