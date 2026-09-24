@@ -57,7 +57,7 @@ export function ProductCard({
 
   return (
     <Card className="overflow-hidden border-border/80 bg-card/95 transition-all hover:shadow-md">
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="px-4 space-y-3">
         {/* Top: Image + Info */}
         <div className="flex items-start gap-3">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-border/60 bg-muted/20 flex items-center justify-center">

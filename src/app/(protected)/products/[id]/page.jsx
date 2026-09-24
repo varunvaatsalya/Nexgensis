@@ -2,23 +2,21 @@
 
 import React, { useState, use, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft,
-  Star,
   ShieldCheck,
   Truck,
   RotateCcw,
-  Tag,
   Boxes,
   Edit2,
   Trash2,
   CheckCircle2,
   AlertCircle,
   XCircle,
-  QrCode,
   Loader2,
-  Package,
+  MoreVertical,
 } from "lucide-react";
 
 import { useProduct } from "@/hooks/use-product";
@@ -26,10 +24,18 @@ import { ProductGallery } from "@/components/product-gallery";
 import { ProductReviews } from "@/components/product-reviews";
 import { ProductFormDialog } from "@/components/product-form";
 import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { RatingStars } from "@/components/rating-stars";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "cn";
 import ProductNotFound from "../not-found";
 
 function ProductDetailContent({ id }) {
@@ -39,16 +45,30 @@ function ProductDetailContent({ id }) {
   // Rebuild the query string so the back button preserves user search/pagination/filters
   const backQuery = searchParams.toString() ? `?${searchParams.toString()}` : "";
 
-  const { product, isLoading, isNotFound, error, refetch } = useProduct(id);
+  const { product, isLoading, isNotFound, refetch } = useProduct(id);
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteDialogOpen] = useState(false);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground">
-        <Loader2 className="size-8 animate-spin text-primary" />
-        <p className="text-sm font-medium">Loading product specifications...</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
+        <div className="relative size-48 sm:size-56 mb-4 drop-shadow-sm">
+          <Image
+            src="/illustrations/load-product.svg"
+            alt="Loading product specifications"
+            fill
+            priority
+            className="object-contain"
+          />
+        </div>
+        <h3 className="text-base font-bold text-foreground tracking-tight mb-1">
+          Loading Product Specifications
+        </h3>
+        <p className="max-w-sm text-xs sm:text-sm text-muted-foreground leading-relaxed flex items-center justify-center gap-2">
+          <Loader2 className="size-5 animate-spin text-sky-400" />
+          <span>Fetching details from catalog...</span>
+        </p>
       </div>
     );
   }
@@ -94,15 +114,53 @@ function ProductDetailContent({ id }) {
   return (
     <div className="space-y-8 pb-16">
       {/* Back Navigation Bar + Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <Link href={`/products${backQuery}`}>
-          <Button variant="ghost" size="sm" className="gap-2 font-medium text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="size-4" />
-            <span>Back to Products</span>
-          </Button>
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          href={`/products${backQuery}`}
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "sm" }),
+            "gap-2 font-medium text-muted-foreground hover:text-foreground -ml-2 sm:ml-0"
+          )}
+        >
+          <ArrowLeft className="size-4" />
+          <span>Back to Products</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        {/* Mobile Actions Dropdown / Popover */}
+        <div className="flex sm:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "gap-1.5 font-semibold text-xs h-8 px-2.5 cursor-pointer shadow-xs"
+              )}
+              aria-label="Product options"
+            >
+              <MoreVertical className="size-3.5" />
+              <span>Options</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44 p-1.5 shadow-lg">
+              <DropdownMenuItem
+                onClick={() => setFormOpen(true)}
+                className="cursor-pointer gap-2 font-medium text-xs py-2"
+              >
+                <Edit2 className="size-3.5 text-muted-foreground" />
+                <span>Edit Product</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setDeleteDialogOpen(true)}
+                className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive gap-2 font-medium text-xs py-2"
+              >
+                <Trash2 className="size-3.5" />
+                <span>Delete Product</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Desktop Action Buttons */}
+        <div className="hidden sm:flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -290,9 +348,23 @@ export default function ProductDetailPage({ params }) {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground">
-          <Loader2 className="size-8 animate-spin text-primary" />
-          <p className="text-sm font-medium">Loading product page...</p>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
+          <div className="relative size-48 sm:size-56 mb-4 drop-shadow-sm">
+            <Image
+              src="/illustrations/load-product.svg"
+              alt="Loading product specifications"
+              fill
+              priority
+              className="object-contain"
+            />
+          </div>
+          <h3 className="text-base font-bold text-foreground tracking-tight mb-1">
+            Loading Product Specifications
+          </h3>
+          <p className="max-w-sm text-xs sm:text-sm text-muted-foreground leading-relaxed flex items-center justify-center gap-2">
+            <Loader2 className="size-3.5 animate-spin text-primary" />
+            <span>Fetching details from catalog...</span>
+          </p>
         </div>
       }
     >

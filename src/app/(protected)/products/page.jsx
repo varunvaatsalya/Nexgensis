@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Plus, Sparkles, FilterX, HelpCircle, Loader2, RefreshCw } from "lucide-react";
+import { Plus, FilterX, Loader2 } from "lucide-react";
 
 import {
   parseProductQueryParams,

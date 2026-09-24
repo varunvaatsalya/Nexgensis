@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/use-debounce";
 
 export function SearchInput({
   value = "",
@@ -14,30 +13,51 @@ export function SearchInput({
 }) {
   const [localValue, setLocalValue] = useState(value);
   const [prevValue, setPrevValue] = useState(value);
+  const timeoutRef = useRef(null);
 
-  // Synchronize localValue during render if external value changes (e.g. reset filters)
+  // Synchronize localValue during render if external value changes (pure render state synchronization)
   if (value !== prevValue) {
     setPrevValue(value);
     setLocalValue(value);
   }
 
-  const debouncedValue = useDebounce(localValue, 500);
-  const isFirstRender = useRef(true);
-
+  // Cancel any active debounce timeout when external value prop changes (e.g. Reset Filters)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-    if (debouncedValue !== value) {
-      onChange(debouncedValue);
+  }, [value]);
+
+  const handleChange = (e) => {
+    const nextVal = e.target.value;
+    setLocalValue(nextVal);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-  }, [debouncedValue, onChange, value]);
+
+    timeoutRef.current = setTimeout(() => {
+      onChange(nextVal);
+    }, 500);
+  };
 
   const handleClear = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     setLocalValue("");
     onChange("");
   };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className={`relative flex-1 min-w-[240px] max-w-md ${className}`}>
@@ -52,7 +72,7 @@ export function SearchInput({
       <Input
         type="text"
         value={localValue}
-        onChange={(e) => setLocalValue(e.target.value)}
+        onChange={handleChange}
         placeholder={placeholder}
         className="pl-9 pr-9 h-9 bg-background/60 border-border/80 text-sm focus-visible:ring-primary/20"
         aria-label="Search products"
@@ -62,7 +82,7 @@ export function SearchInput({
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           aria-label="Clear search"
         >
           <X className="size-4" />
