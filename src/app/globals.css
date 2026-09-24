@@ -8,8 +8,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-nunito), var(--font-dm-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-nunito: var(--font-nunito), sans-serif;
-  --font-dm-sans: var(--font-dm-sans), sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-dm-sans), var(--font-nunito), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -123,12 +121,8 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
-    font-family: var(--font-nunito), var(--font-dm-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: var(--font-nunito), var(--font-dm-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;

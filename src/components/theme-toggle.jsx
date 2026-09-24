@@ -4,7 +4,8 @@ import * as React from "react";
 import { useSyncExternalStore } from "react";
 import { Moon, Sun, Laptop } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { cn } from "cn";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,13 @@ export function ThemeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-9 rounded-full" aria-label="Select theme" />}>
+      <DropdownMenuTrigger
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "icon" }),
+          "size-9 rounded-full cursor-pointer"
+        )}
+        aria-label="Select theme"
+      >
         {theme === "dark" ? (
           <Moon className="size-4 transition-transform duration-200" />
         ) : theme === "light" ? (

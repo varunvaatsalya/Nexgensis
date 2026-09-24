@@ -4,7 +4,8 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { createPortal } from "react-dom";
 import { Filter, Search, Check, ChevronDown, X, Loader2 } from "lucide-react";
 import { useCategories } from "@/hooks/use-categories";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 
 export function CategoryFilter({
   value = "",
@@ -139,13 +140,15 @@ export function CategoryFilter({
   return (
     <div className={`relative ${className}`}>
       {/* Trigger Button */}
-      <Button
+      <button
         ref={buttonRef}
         type="button"
-        variant="outline"
         disabled={disabled || isLoading}
         onClick={toggleOpen}
-        className="h-9 w-full justify-between gap-2 bg-background border-border text-sm font-medium px-3 shadow-xs hover:bg-muted/60"
+        className={cn(
+          buttonVariants({ variant: "outline" }),
+          "h-9 w-full justify-between gap-2 bg-background border-border text-sm font-medium pl-3 pr-9 shadow-xs hover:bg-muted/60 text-left font-normal cursor-pointer"
+        )}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
@@ -164,26 +167,27 @@ export function CategoryFilter({
             <span className="text-muted-foreground truncate">{placeholder}</span>
           )}
         </div>
+      </button>
 
-        <div className="flex items-center gap-1 shrink-0">
-          {selectedCategory && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-              title="Clear category"
-              aria-label="Clear category"
-            >
-              <X className="size-3.5" />
-            </button>
-          )}
-          <ChevronDown
-            className={`size-4 text-muted-foreground transition-transform duration-200 ${
-              isOpen ? "rotate-180" : ""
-            }`}
-          />
-        </div>
-      </Button>
+      {/* Right controls: Clear (X) button + Chevron */}
+      <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none z-10">
+        {selectedCategory && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="pointer-events-auto rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+            title="Clear category"
+            aria-label="Clear category"
+          >
+            <X className="size-3.5" />
+          </button>
+        )}
+        <ChevronDown
+          className={`size-4 text-muted-foreground transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </div>
 
       {/* Portaled Solid Dropdown Popup */}
       {isOpen &&

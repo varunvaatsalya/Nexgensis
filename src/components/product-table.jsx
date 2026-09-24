@@ -23,7 +23,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import { RatingStars } from "@/components/rating-stars";
 
 export function ProductTable({
@@ -179,19 +180,14 @@ export function ProductTable({
                 {/* Actions */}
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      render={
-                        <Link
-                          href={`/products/${product.id}${currentQueryString}`}
-                          aria-label={`View details of ${product.title}`}
-                        />
-                      }
+                    <Link
+                      href={`/products/${product.id}${currentQueryString}`}
+                      className={cn(buttonVariants({ variant: "ghost", size: "icon-sm" }))}
                       title="View Details"
+                      aria-label={`View details of ${product.title}`}
                     >
                       <Eye className="size-4 text-muted-foreground hover:text-foreground" />
-                    </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       size="icon-sm"

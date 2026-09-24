@@ -15,7 +15,8 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import { RatingStars } from "@/components/rating-stars";
 
 export function ProductCard({
@@ -126,12 +127,14 @@ export function ProductCard({
         <div className="flex items-center justify-between gap-2 pt-1">
           <Link
             href={`/products/${product.id}${currentQueryString}`}
-            className="flex-1"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "flex-1 text-xs font-semibold gap-1.5 h-8"
+            )}
+            aria-label={`View details of ${product.title}`}
           >
-            <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 h-8">
-              <Eye className="size-3.5" />
-              <span>Details</span>
-            </Button>
+            <Eye className="size-3.5" />
+            <span>Details</span>
           </Link>
 
           <Button

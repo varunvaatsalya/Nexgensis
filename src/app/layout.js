@@ -30,7 +30,10 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
       className={`${nunito.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary"
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
