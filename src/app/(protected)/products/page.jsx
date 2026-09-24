@@ -13,7 +13,6 @@ import { useProducts } from "@/hooks/use-products";
 import { SearchInput } from "@/components/search-input";
 import { CategoryFilter } from "@/components/category-filter";
 import { SortSelect } from "@/components/sort-select";
-import { PageSizeSelect } from "@/components/page-size-select";
 import { Pagination } from "@/components/pagination";
 import { ProductList } from "@/components/product-list";
 import { ProductFormDialog } from "@/components/product-form";
@@ -195,32 +194,6 @@ function ProductsDashboardContent() {
           </div>
         </div>
 
-        {/* Mutual Exclusivity and Active Filter Feedback */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/40 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <HelpCircle className="size-3.5 text-primary shrink-0" />
-            <span>
-              {params.q ? (
-                <span>
-                  Filtering by search: <strong className="text-foreground font-semibold">&quot;{params.q}&quot;</strong> (category filter paused)
-                </span>
-              ) : params.category ? (
-                <span>
-                  Filtered by category: <strong className="text-foreground capitalize font-semibold">{params.category}</strong>
-                </span>
-              ) : (
-                <span>Search and category filters operate independently for accurate server pagination.</span>
-              )}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <PageSizeSelect
-              value={params.limit}
-              onChange={handlePageSizeChange}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Main Products List (Responsive Table/Grid) */}
@@ -244,6 +217,7 @@ function ProductsDashboardContent() {
           totalItems={total}
           pageSize={params.limit}
           onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
         />
       )}
 

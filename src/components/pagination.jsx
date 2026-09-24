@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageSizeSelect } from "@/components/page-size-select";
 
 export function Pagination({
   currentPage = 1,
@@ -10,6 +11,7 @@ export function Pagination({
   totalItems = 0,
   pageSize = 10,
   onPageChange,
+  onPageSizeChange,
   className = "",
 }) {
   // Compute display range
@@ -36,16 +38,27 @@ export function Pagination({
   const pages = getPageNumbers();
 
   return (
-    <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 py-3 ${className}`}>
-      {/* Informative text: "Showing 21–40 of 194" */}
-      <div className="text-xs font-medium text-muted-foreground order-2 sm:order-1">
-        Showing <span className="font-semibold text-foreground">{startItem}</span>–
-        <span className="font-semibold text-foreground">{endItem}</span> of{" "}
-        <span className="font-semibold text-foreground">{totalItems}</span> products
+    <div className={`flex flex-col md:flex-row items-center justify-between gap-4 py-3 ${className}`}>
+      {/* Informative text + Page Size Dropdown together */}
+      <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground order-2 md:order-1 flex-wrap">
+        <span>
+          Showing <span className="font-semibold text-foreground">{startItem}</span>–
+          <span className="font-semibold text-foreground">{endItem}</span> of{" "}
+          <span className="font-semibold text-foreground">{totalItems}</span> products
+        </span>
+
+        {onPageSizeChange && (
+          <div className="flex items-center gap-2 pl-3 border-l border-border/70">
+            <PageSizeSelect
+              value={pageSize}
+              onChange={onPageSizeChange}
+            />
+          </div>
+        )}
       </div>
 
       {/* Pagination controls */}
-      <div className="flex items-center gap-1 order-1 sm:order-2">
+      <div className="flex items-center gap-1 order-1 md:order-2">
         {/* Previous page button */}
         <Button
           variant="outline"
