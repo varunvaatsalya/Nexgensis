@@ -158,7 +158,7 @@ function ProductsDashboardContent() {
       </div>
 
       {/* Filter and Control Bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card/60 p-4 shadow-xs backdrop-blur-xs">
+      <div className="relative z-20 flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 shadow-xs">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Left: Search input */}
           <SearchInput
