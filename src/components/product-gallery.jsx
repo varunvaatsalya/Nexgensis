@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
@@ -24,21 +24,18 @@ export function ProductGallery({
     return list.length > 0 ? list : [thumbnail || ""];
   }, [images, thumbnail]);
 
-  const [selectedImage, setSelectedImage] = useState(allImages[0] || "");
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  useEffect(() => {
-    if (allImages.length > 0) {
-      setSelectedImage(allImages[0]);
-    }
-  }, [allImages]);
+  // Derive active image safely without needing useEffect setState
+  const activeImage = allImages[selectedIndex] || allImages[0] || "";
 
   return (
     <div className="flex flex-col gap-4">
       {/* Main Feature Image Container */}
       <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-border/80 bg-muted/20 p-6 flex items-center justify-center shadow-xs">
-        {selectedImage ? (
+        {activeImage ? (
           <Image
-            src={selectedImage}
+            src={activeImage}
             alt={title}
             fill
             priority
@@ -64,12 +61,12 @@ export function ProductGallery({
       {allImages.length > 1 && (
         <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {allImages.map((img, idx) => {
-            const isSelected = img === selectedImage;
+            const isSelected = idx === selectedIndex;
             return (
               <button
                 key={idx}
                 type="button"
-                onClick={() => setSelectedImage(img)}
+                onClick={() => setSelectedIndex(idx)}
                 className={`relative size-18 shrink-0 overflow-hidden rounded-2xl border-2 bg-muted/20 p-1 transition-all ${
                   isSelected
                     ? "border-primary ring-2 ring-primary/20 scale-100"

@@ -202,7 +202,7 @@ function ProductsDashboardContent() {
             <span>
               {params.q ? (
                 <span>
-                  Filtering by search: <strong className="text-foreground font-semibold">"{params.q}"</strong> (category filter paused)
+                  Filtering by search: <strong className="text-foreground font-semibold">&quot;{params.q}&quot;</strong> (category filter paused)
                 </span>
               ) : params.category ? (
                 <span>

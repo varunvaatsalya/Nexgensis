@@ -13,15 +13,17 @@ export function SearchInput({
   className = "",
 }) {
   const [localValue, setLocalValue] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
+
+  // Synchronize localValue during render if external value changes (e.g. reset filters)
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setLocalValue(value);
+  }
+
   const debouncedValue = useDebounce(localValue, 500);
   const isFirstRender = useRef(true);
 
-  // Keep local value in sync when external prop changes (e.g. URL change or reset)
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
-  // When debounced value updates and differs from external prop, emit change
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;

@@ -96,7 +96,7 @@ export function ProductReviews({ reviews = [] }) {
 
               {/* Review text */}
               <p className="text-sm text-foreground/90 pl-12 leading-relaxed">
-                "{rev.comment}"
+                &ldquo;{rev.comment}&rdquo;
               </p>
             </div>
           );

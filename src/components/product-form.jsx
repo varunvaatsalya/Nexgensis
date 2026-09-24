@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Plus, Check, Sparkles, Image as ImageIcon } from "lucide-react";
+import { Loader2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { productsService } from "@/services/products.service";
@@ -56,7 +56,7 @@ const productSchema = z.object({
 export function ProductFormDialog({
   open,
   onOpenChange,
-  product = null, // if provided, mode is EDIT; otherwise ADD
+  product = null,
   onSuccess,
 }) {
   const isEdit = Boolean(product && product.id);
@@ -64,7 +64,6 @@ export function ProductFormDialog({
   const { addLocalProduct, updateLocalProduct } = useLocalProducts();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isSubmittingRef = useRef(false);
 
   const {
     register,
@@ -86,7 +85,6 @@ export function ProductFormDialog({
     },
   });
 
-  // Reset form with product values when dialog opens or product changes
   useEffect(() => {
     if (open) {
       if (product) {
@@ -116,9 +114,8 @@ export function ProductFormDialog({
   }, [open, product, reset, categories]);
 
   const onSubmit = async (data) => {
-    if (isSubmittingRef.current) return;
+    if (isSubmitting) return;
 
-    isSubmittingRef.current = true;
     setIsSubmitting(true);
 
     try {
@@ -136,10 +133,7 @@ export function ProductFormDialog({
       };
 
       if (isEdit) {
-        // Call PUT /products/{id}
         await productsService.updateProduct(product.id, payload);
-
-        // Update local overlay
         updateLocalProduct(product.id, payload);
 
         toast.success("Product Updated", {
@@ -148,10 +142,7 @@ export function ProductFormDialog({
 
         if (onSuccess) onSuccess({ ...product, ...payload });
       } else {
-        // Call POST /products/add
         await productsService.addProduct(payload);
-
-        // Add to local overlay
         const created = addLocalProduct(payload);
 
         toast.success("Product Created", {
@@ -167,7 +158,6 @@ export function ProductFormDialog({
         description: err?.message || "Something went wrong.",
       });
     } finally {
-      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };

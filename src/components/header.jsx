@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
@@ -8,15 +8,12 @@ import {
   Package,
   LogOut,
   User,
-  LayoutDashboard,
-  Shield,
   Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { getAuthUser, clearAuth } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -30,12 +27,14 @@ import {
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const userProfile = getAuthUser();
-    setUser(userProfile);
-  }, []);
+  // Lazy initialize user from localStorage safely
+  const [user] = useState(() => {
+    if (typeof window !== "undefined") {
+      return getAuthUser();
+    }
+    return null;
+  });
 
   const handleLogout = () => {
     clearAuth();

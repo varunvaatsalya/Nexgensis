@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { productsService } from "@/services/products.service";
 import { useLocalProducts } from "@/store/local-products";
 
@@ -15,107 +15,98 @@ export function useProduct(id, { delay = 0 } = {}) {
     isProductDeleted,
     getLocallyAddedProduct,
     getProductWithOverlay,
-    isInitialized,
   } = useLocalProducts();
 
-  const [product, setProduct] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isNotFound, setIsNotFound] = useState(false);
-  const [error, setError] = useState(null);
+  const [apiProduct, setApiProduct] = useState(null);
+  const [isLoadingApi, setIsLoadingApi] = useState(true);
+  const [isApiNotFound, setIsApiNotFound] = useState(false);
+  const [apiError, setApiError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const abortControllerRef = useRef(null);
+  // Derive local overlay statuses purely
+  const isDeleted = Boolean(id && isProductDeleted(id));
+  const locallyAdded = id ? getLocallyAddedProduct(id) : null;
+  const isInvalidId = !id;
 
-  const fetchProduct = useCallback(async () => {
-    if (!id) {
-      setIsNotFound(true);
-      setIsLoading(false);
-      return;
-    }
-
-    // 1. If product is marked as deleted in local overlay
-    if (isProductDeleted(id)) {
-      setIsNotFound(true);
-      setIsLoading(false);
-      setProduct(null);
-      return;
-    }
-
-    // 2. If product is in locally added list
-    const locallyAdded = getLocallyAddedProduct(id);
-    if (locallyAdded) {
-      setProduct(locallyAdded);
-      setIsNotFound(false);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
-
-    // 3. Otherwise fetch from API
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    setIsLoading(true);
-    setError(null);
-    setIsNotFound(false);
-
-    try {
-      const data = await productsService.getProductById(
-        id,
-        { delay },
-        { signal: controller.signal }
-      );
-
-      if (!data || !data.id) {
-        setIsNotFound(true);
-        setProduct(null);
-      } else {
-        // Overlay any local edits
-        const overlaid = getProductWithOverlay(data);
-        if (!overlaid) {
-          setIsNotFound(true);
-          setProduct(null);
-        } else {
-          setProduct(overlaid);
-          setIsNotFound(false);
-        }
-      }
-    } catch (err) {
-      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") {
-        return;
-      }
-
-      if (err?.status === 404) {
-        setIsNotFound(true);
-        setProduct(null);
-      } else {
-        setError(err?.message || "Failed to load product details");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, delay, isProductDeleted, getLocallyAddedProduct, getProductWithOverlay]);
+  const shouldFetchFromApi = Boolean(id && !isDeleted && !locallyAdded);
 
   useEffect(() => {
-    if (isInitialized) {
-      fetchProduct();
+    if (!shouldFetchFromApi) {
+      return;
     }
 
+    let ignore = false;
+    const controller = new AbortController();
+
+    productsService
+      .getProductById(id, { delay }, { signal: controller.signal })
+      .then((data) => {
+        if (!ignore) {
+          if (!data || !data.id) {
+            setIsApiNotFound(true);
+            setApiProduct(null);
+          } else {
+            setApiProduct(data);
+            setIsApiNotFound(false);
+            setApiError(null);
+          }
+          setIsLoadingApi(false);
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") {
+            return;
+          }
+          if (err?.status === 404) {
+            setIsApiNotFound(true);
+            setApiProduct(null);
+          } else {
+            setApiError(err?.message || "Failed to load product details");
+          }
+          setIsLoadingApi(false);
+        }
+      });
+
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      ignore = true;
+      controller.abort();
     };
-  }, [fetchProduct, isInitialized]);
+  }, [id, delay, shouldFetchFromApi, reloadKey]);
+
+  const refetch = useCallback(() => {
+    setIsLoadingApi(true);
+    setReloadKey((k) => k + 1);
+  }, []);
+
+  // Compute final product and status
+  if (isInvalidId || isDeleted) {
+    return {
+      product: null,
+      isLoading: false,
+      isNotFound: true,
+      error: null,
+      refetch,
+    };
+  }
+
+  if (locallyAdded) {
+    return {
+      product: locallyAdded,
+      isLoading: false,
+      isNotFound: false,
+      error: null,
+      refetch,
+    };
+  }
+
+  const overlaidProduct = apiProduct ? getProductWithOverlay(apiProduct) : null;
 
   return {
-    product,
-    isLoading: isLoading || !isInitialized,
-    isNotFound,
-    error,
-    refetch: fetchProduct,
+    product: overlaidProduct,
+    isLoading: isLoadingApi,
+    isNotFound: isApiNotFound || (!isLoadingApi && !overlaidProduct),
+    error: apiError,
+    refetch,
   };
 }

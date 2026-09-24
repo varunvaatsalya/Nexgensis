@@ -21,7 +21,7 @@ export default function GlobalNotFound() {
       </h1>
 
       <p className="max-w-md text-sm text-muted-foreground mb-8 leading-relaxed">
-        The page you are looking for doesn't exist or has been moved.
+        The page you are looking for doesn&apos;t exist or has been moved.
       </p>
 
       <div className="flex items-center gap-3">

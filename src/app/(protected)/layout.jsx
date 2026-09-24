@@ -9,14 +9,19 @@ import { Loader2 } from "lucide-react";
 
 export default function ProtectedLayout({ children }) {
   const router = useRouter();
-  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // Lazy initialize authorization state from cookie/localStorage
+  const [isAuthorized] = useState(() => {
+    if (typeof window !== "undefined") {
+      return Boolean(getAuthToken());
+    }
+    return true; // Server-side render optimistic pass; middleware already protects
+  });
 
   useEffect(() => {
     const token = getAuthToken();
     if (!token) {
       router.replace("/login");
-    } else {
-      setIsAuthorized(true);
     }
   }, [router]);
 

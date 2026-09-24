@@ -62,7 +62,8 @@ apiClient.interceptors.response.use(
     if (status === 401 && !isLoginEndpoint) {
       clearAuth();
       if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
-        window.location.href = `/login?session_expired=true`;
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login?session_expired=true";
       }
     }
 

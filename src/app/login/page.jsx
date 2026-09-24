@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,6 @@ import {
   Loader2,
   AlertCircle,
   Package,
-  Sparkles,
   ShieldCheck,
   ArrowRight,
   Info,
@@ -26,7 +25,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -42,9 +40,6 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState(sessionExpired ? "Your session expired. Please log in again." : null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Ref-based guard to strictly prevent double-click / concurrent requests
-  const isSubmittingRef = useRef(false);
 
   const defaultUsername = process.env.NEXT_PUBLIC_DEMO_USERNAME || "emilys";
   const defaultPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "emilyspass";
@@ -63,10 +58,8 @@ function LoginForm() {
   });
 
   const onSubmit = async (data) => {
-    // Guard against multiple rapid clicks
-    if (isSubmittingRef.current) return;
+    if (isSubmitting) return;
 
-    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setApiError(null);
 
@@ -78,10 +71,8 @@ function LoginForm() {
       });
 
       if (response && response.accessToken) {
-        // Store auth token in cookie + localStorage
         setAuthToken(response.accessToken);
 
-        // Store user metadata
         const userProfile = {
           id: response.id,
           username: response.username,
@@ -97,7 +88,6 @@ function LoginForm() {
           description: "Logged in successfully.",
         });
 
-        // Navigate to protected destination
         router.push(redirectTo);
         router.refresh();
       } else {
@@ -111,7 +101,6 @@ function LoginForm() {
       setApiError(errorMessage);
       toast.error("Login Failed", { description: errorMessage });
     } finally {
-      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -228,7 +217,7 @@ function LoginForm() {
             )}
           </div>
 
-          {/* Submit Button with spinner + double click guard */}
+          {/* Submit Button with spinner + double click protection */}
           <Button
             type="submit"
             className="w-full h-10 mt-2 font-medium"
@@ -262,7 +251,6 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-radial from-background via-background to-muted/40">
-      {/* Background ambient lighting effects */}
       <div className="absolute -top-40 -left-40 size-96 rounded-full bg-primary/15 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 size-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 

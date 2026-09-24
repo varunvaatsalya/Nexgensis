@@ -19,7 +19,7 @@ export function useProducts({
   order = "asc",
   delay = 0,
 } = {}) {
-  const { applyOverlayToList, overlay } = useLocalProducts();
+  const { applyOverlayToList } = useLocalProducts();
 
   const [rawProducts, setRawProducts] = useState([]);
   const [rawTotal, setRawTotal] = useState(0);
@@ -31,70 +31,65 @@ export function useProducts({
   const abortControllerRef = useRef(null);
   const latestRequestIdRef = useRef(0);
 
-  const fetchProducts = useCallback(async () => {
-    // 1. Abort previous in-flight request if active
+  const fetchProducts = useCallback(
+    async (signal, requestId) => {
+      const skip = Math.max(0, (page - 1) * limit);
+
+      try {
+        let result;
+        const options = { signal };
+        const queryPayload = { limit, skip, sortBy, order, delay };
+
+        if (q && q.trim()) {
+          result = await productsService.searchProducts(
+            { ...queryPayload, q: q.trim() },
+            options
+          );
+        } else if (category && category.trim()) {
+          result = await productsService.getProductsByCategory(
+            { ...queryPayload, category: category.trim() },
+            options
+          );
+        } else {
+          result = await productsService.getProducts(queryPayload, options);
+        }
+
+        // Strict race condition check: ignore if this is not the latest request
+        if (requestId === latestRequestIdRef.current) {
+          setRawProducts(result?.products || []);
+          setRawTotal(result?.total || 0);
+          setError(null);
+          setIsLoading(false);
+          setIsFetching(false);
+        }
+      } catch (err) {
+        if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") {
+          return;
+        }
+
+        if (requestId === latestRequestIdRef.current) {
+          setError(err?.message || "Failed to load products. Please check your network and try again.");
+          setIsLoading(false);
+          setIsFetching(false);
+        }
+      }
+    },
+    [page, limit, q, category, sortBy, order, delay]
+  );
+
+  useEffect(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
 
-    // 2. Set up new AbortController and track unique Request ID
     const controller = new AbortController();
     abortControllerRef.current = controller;
     const currentRequestId = ++latestRequestIdRef.current;
 
-    setIsFetching(true);
-    setError(null);
-
-    const skip = Math.max(0, (page - 1) * limit);
-
-    try {
-      let result;
-      const options = { signal: controller.signal };
-      const queryPayload = { limit, skip, sortBy, order, delay };
-
-      if (q && q.trim()) {
-        result = await productsService.searchProducts(
-          { ...queryPayload, q: q.trim() },
-          options
-        );
-      } else if (category && category.trim()) {
-        result = await productsService.getProductsByCategory(
-          { ...queryPayload, category: category.trim() },
-          options
-        );
-      } else {
-        result = await productsService.getProducts(queryPayload, options);
-      }
-
-      // 3. Strict race condition check: ignore if this is not the latest request
-      if (currentRequestId === latestRequestIdRef.current) {
-        setRawProducts(result?.products || []);
-        setRawTotal(result?.total || 0);
-        setIsLoading(false);
-        setIsFetching(false);
-      }
-    } catch (err) {
-      // Ignore canceled errors completely
-      if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") {
-        return;
-      }
-
-      if (currentRequestId === latestRequestIdRef.current) {
-        setError(err?.message || "Failed to load products. Please check your network and try again.");
-        setIsLoading(false);
-        setIsFetching(false);
-      }
-    }
-  }, [page, limit, q, category, sortBy, order, delay]);
-
-  // Trigger fetch whenever parameters change
-  useEffect(() => {
-    fetchProducts();
+    fetchProducts(controller.signal, currentRequestId);
 
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      controller.abort();
     };
   }, [fetchProducts]);
 
@@ -108,6 +103,14 @@ export function useProducts({
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
+  const refetch = useCallback(() => {
+    setIsFetching(true);
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const currentRequestId = ++latestRequestIdRef.current;
+    return fetchProducts(controller.signal, currentRequestId);
+  }, [fetchProducts]);
+
   return {
     products,
     total,
@@ -116,6 +119,6 @@ export function useProducts({
     isLoading,
     isFetching,
     error,
-    refetch: fetchProducts,
+    refetch,
   };
 }
