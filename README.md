@@ -13,7 +13,7 @@ A comprehensive, enterprise-ready **Product Admin Dashboard** built with **Next.
 - **Data Fetching**: [Axios](https://axios-http.com/) (with centralized interceptors & error normalization)
 - **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
 - **Theming**: [next-themes](https://github.com/pacocoursey/next-themes) (Light / Dark / System modes)
-- **Notifications**: [Sonner](https://sonner.emilkowal.ski/)
+- **Notifications**: [React Toastify](https://fkhadra.github.io/react-toastify/)
 - **API Source**: [DummyJSON](https://dummyjson.com)
 
 ---
