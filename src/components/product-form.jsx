@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
+import { CategoryFilter } from "@/components/category-filter";
 import { productsService } from "@/services/products.service";
 import { useCategories } from "@/hooks/use-categories";
 import { useLocalProducts } from "@/store/local-products";
@@ -22,13 +23,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const productSchema = z.object({
   title: z.string().trim().min(3, "Title must be at least 3 characters"),
@@ -214,22 +208,14 @@ export function ProductFormDialog({
                 control={control}
                 name="category"
                 render={({ field }) => (
-                  <Select
+                  <CategoryFilter
                     value={field.value}
-                    onValueChange={field.onChange}
+                    onChange={field.onChange}
                     disabled={isSubmitting}
-                  >
-                    <SelectTrigger id="category" className="h-9 w-full">
-                      <SelectValue placeholder="Select Category" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.slug} value={cat.slug}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    placeholder="Select Category"
+                    showAllOption={false}
+                    className="w-full"
+                  />
                 )}
               />
               {errors.category && (
