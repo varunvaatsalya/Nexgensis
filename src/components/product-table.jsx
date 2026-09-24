@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RatingStars } from "@/components/rating-stars";
 
 export function ProductTable({
   products = [],
@@ -161,14 +162,11 @@ export function ProductTable({
 
                 {/* Rating */}
                 <TableCell>
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex items-center text-amber-500">
-                      <Star className="size-3.5 fill-amber-500" />
-                    </div>
-                    <span className="text-xs font-semibold">
-                      {Number(product.rating || 0).toFixed(1)}
-                    </span>
-                  </div>
+                  <RatingStars
+                    rating={product.rating || 0}
+                    size="sm"
+                    showValue={true}
+                  />
                 </TableCell>
 
                 {/* Stock */}

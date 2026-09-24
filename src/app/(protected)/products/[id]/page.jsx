@@ -29,6 +29,7 @@ import { DeleteConfirmDialog } from "@/components/delete-confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { RatingStars } from "@/components/rating-stars";
 import ProductNotFound from "../not-found";
 
 function ProductDetailContent({ id }) {
@@ -166,10 +167,9 @@ function ProductDetailContent({ id }) {
             </h1>
 
             <div className="flex items-center gap-4 text-sm text-muted-foreground pt-1">
-              <div className="flex items-center gap-1 text-amber-500 font-semibold">
-                <Star className="size-4 fill-amber-500" />
-                <span className="text-foreground">{Number(product.rating || 0).toFixed(1)}</span>
-                <span className="text-muted-foreground font-normal">
+              <div className="flex items-center gap-2">
+                <RatingStars rating={product.rating || 0} size="md" showValue={true} />
+                <span className="text-xs text-muted-foreground font-normal">
                   ({product.reviews ? product.reviews.length : 0} reviews)
                 </span>
               </div>

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { Star, MessageSquare, ShieldCheck } from "lucide-react";
+import { MessageSquare, ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { RatingStars } from "@/components/rating-stars";
 
 export function ProductReviews({ reviews = [] }) {
   if (!reviews || reviews.length === 0) {
@@ -31,9 +32,7 @@ export function ProductReviews({ reviews = [] }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center text-amber-500">
-            <Star className="size-4 fill-amber-500" />
-          </div>
+          <RatingStars rating={Number(averageRating)} size="md" />
           <span className="text-lg font-bold text-foreground">{averageRating}</span>
           <span className="text-xs text-muted-foreground">/ 5.0</span>
         </div>
@@ -79,19 +78,8 @@ export function ProductReviews({ reviews = [] }) {
                   </div>
                 </div>
 
-                {/* Rating stars */}
-                <div className="flex items-center gap-0.5 text-amber-500">
-                  {Array.from({ length: 5 }).map((_, sIdx) => (
-                    <Star
-                      key={sIdx}
-                      className={`size-3.5 ${
-                        sIdx < rev.rating
-                          ? "fill-amber-500 text-amber-500"
-                          : "text-muted-foreground/30"
-                      }`}
-                    />
-                  ))}
-                </div>
+                {/* Individual Rating Stars */}
+                <RatingStars rating={rev.rating || 0} size="sm" />
               </div>
 
               {/* Review text */}

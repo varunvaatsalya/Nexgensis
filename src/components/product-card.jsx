@@ -16,6 +16,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RatingStars } from "@/components/rating-stars";
 
 export function ProductCard({
   product,
@@ -91,15 +92,9 @@ export function ProductCard({
               {product.title}
             </Link>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{product.brand || "Generic"}</span>
-              <span>•</span>
-              <div className="flex items-center gap-1 text-amber-500">
-                <Star className="size-3 fill-amber-500" />
-                <span className="font-semibold text-foreground">
-                  {Number(product.rating || 0).toFixed(1)}
-                </span>
-              </div>
+            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground pt-0.5">
+              <span className="truncate">{product.brand || "Generic"}</span>
+              <RatingStars rating={product.rating || 0} size="xs" showValue={true} />
             </div>
           </div>
         </div>

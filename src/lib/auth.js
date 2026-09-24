@@ -18,12 +18,11 @@ export function getAuthToken() {
  */
 export function setAuthToken(token, days = 7) {
   if (!token) return;
-  const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
   Cookies.set(AUTH_TOKEN_KEY, token, {
     expires: days,
     path: "/",
     sameSite: "lax",
-    secure: isHttps,
+    secure: process.env.NODE_ENV === "production",
   });
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_TOKEN_KEY, token);
