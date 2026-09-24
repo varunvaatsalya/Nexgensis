@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, Image as ImageIcon } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { productsService } from "@/services/products.service";
 import { useCategories } from "@/hooks/use-categories";
@@ -136,27 +136,21 @@ export function ProductFormDialog({
         await productsService.updateProduct(product.id, payload);
         updateLocalProduct(product.id, payload);
 
-        toast.success("Product Updated", {
-          description: `"${payload.title}" was updated successfully.`,
-        });
+        toast.success(`"${payload.title}" updated successfully.`);
 
         if (onSuccess) onSuccess({ ...product, ...payload });
       } else {
         await productsService.addProduct(payload);
         const created = addLocalProduct(payload);
 
-        toast.success("Product Created", {
-          description: `"${payload.title}" was added to catalog.`,
-        });
+        toast.success(`"${payload.title}" added to catalog successfully.`);
 
         if (onSuccess) onSuccess(created);
       }
 
       onOpenChange(false);
     } catch (err) {
-      toast.error(isEdit ? "Update Failed" : "Creation Failed", {
-        description: err?.message || "Something went wrong.",
-      });
+      toast.error(err?.message || (isEdit ? "Update failed." : "Creation failed."));
     } finally {
       setIsSubmitting(false);
     }

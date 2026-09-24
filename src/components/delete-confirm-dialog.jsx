@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { Loader2, Trash2, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { productsService } from "@/services/products.service";
 import { useLocalProducts } from "@/store/local-products";
@@ -41,17 +41,12 @@ export function DeleteConfirmDialog({
       // Apply to local overlay
       deleteLocalProduct(product.id);
 
-      toast.success("Product Deleted", {
-        description: `"${product.title}" was removed successfully.`,
-      });
+      toast.success(`"${product.title}" was deleted successfully.`);
 
       onOpenChange(false);
       if (onDeleted) onDeleted(product.id);
     } catch (err) {
-      // If error occurs, still permit local deletion fallback if desired or inform user
-      toast.error("Delete Failed", {
-        description: err?.message || "Could not delete product.",
-      });
+      toast.error(err?.message || "Could not delete product.");
     } finally {
       isDeletingRef.current = false;
       setIsDeleting(false);

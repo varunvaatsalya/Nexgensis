@@ -1,8 +1,7 @@
 import { DM_Sans, Nunito } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-
+import { AppToastContainer } from "@/components/toast-container";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -39,7 +38,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {children}
-          <Toaster richColors closeButton position="top-right" />
+          <AppToastContainer />
         </ThemeProvider>
       </body>
     </html>

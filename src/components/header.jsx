@@ -10,7 +10,7 @@ import {
   User,
   Layers,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { getAuthUser, clearAuth } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -38,9 +38,7 @@ export function Header() {
 
   const handleLogout = () => {
     clearAuth();
-    toast.success("Signed out successfully", {
-      description: "You have been logged out of the admin session.",
-    });
+    toast.success("Signed out successfully. You have been logged out.");
     router.push("/login");
     router.refresh();
   };

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import {
   Lock,
   User,
@@ -84,9 +84,7 @@ function LoginForm() {
         };
         setAuthUser(userProfile);
 
-        toast.success(`Welcome back, ${response.firstName || response.username}!`, {
-          description: "Logged in successfully.",
-        });
+        toast.success(`Welcome back, ${response.firstName || response.username}! Logged in successfully.`);
 
         router.push(redirectTo);
         router.refresh();
@@ -99,7 +97,7 @@ function LoginForm() {
           ? "Invalid username or password. Please verify the demo credentials below."
           : err?.message || "Authentication failed. Please try again.";
       setApiError(errorMessage);
-      toast.error("Login Failed", { description: errorMessage });
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
