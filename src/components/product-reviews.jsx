@@ -32,7 +32,7 @@ export function ProductReviews({ reviews = [] }) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <RatingStars rating={Number(averageRating)} size="md" />
+          <RatingStars rating={Number(averageRating)} size="md" showValue={false} />
           <span className="text-lg font-bold text-foreground">{averageRating}</span>
           <span className="text-xs text-muted-foreground">/ 5.0</span>
         </div>
