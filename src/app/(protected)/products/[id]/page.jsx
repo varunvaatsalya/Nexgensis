@@ -184,11 +184,11 @@ function ProductDetailContent({ id }) {
               <div className="space-y-1">
                 <div className="flex items-baseline gap-3">
                   <span className="text-3xl font-extrabold text-foreground">
-                    ${Number(product.price).toFixed(2)}
+                    ₹{Number(product.price).toFixed(2)}
                   </span>
                   {originalPrice && (
                     <span className="text-base text-muted-foreground line-through">
-                      ${originalPrice}
+                      ₹{originalPrice}
                     </span>
                   )}
                 </div>

@@ -240,14 +240,14 @@ export function ProductFormDialog({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="price" className="text-xs font-semibold">
-                Price ($) <span className="text-destructive">*</span>
+                Price (₹) <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
                 min="0.01"
-                placeholder="29.99"
+                placeholder="999.00"
                 {...register("price")}
                 disabled={isSubmitting}
               />

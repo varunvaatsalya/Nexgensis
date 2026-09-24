@@ -103,7 +103,7 @@ export function ProductCard({
         <div className="flex items-center justify-between pt-2 border-t border-border/50">
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-bold text-foreground">
-              ${Number(product.price).toFixed(2)}
+              ₹{Number(product.price).toFixed(2)}
             </span>
             {hasDiscount && (
               <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
@@ -112,7 +112,7 @@ export function ProductCard({
             )}
             {originalPrice && (
               <span className="text-xs text-muted-foreground line-through">
-                ${originalPrice}
+                ₹{originalPrice}
               </span>
             )}
           </div>

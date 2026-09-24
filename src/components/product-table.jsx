@@ -144,7 +144,7 @@ export function ProductTable({
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1.5">
                       <span className="font-bold text-foreground">
-                        ${Number(product.price).toFixed(2)}
+                        ₹{Number(product.price).toFixed(2)}
                       </span>
                       {hasDiscount && (
                         <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
@@ -154,7 +154,7 @@ export function ProductTable({
                     </div>
                     {originalPrice && (
                       <span className="text-[11px] text-muted-foreground line-through">
-                        ${originalPrice}
+                        ₹{originalPrice}
                       </span>
                     )}
                   </div>
